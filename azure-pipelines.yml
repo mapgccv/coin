@@ -61,7 +61,7 @@ jobs:
     - task: PublishBuildArtifacts@1
       inputs: {pathtoPublish: '$(Build.ArtifactStagingDirectory)'}
 - job: windows
-  pool: {vmImage: 'vs2017-win2016'}
+  pool: {vmImage: 'windows-2019'}
   variables:
     upload: $(Build.ArtifactStagingDirectory)
     nbits: 64
@@ -70,8 +70,8 @@ jobs:
         git submodule update --init --recursive --remote
         mkdir build
         cd build
-        cmake .. -G"MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
-        mingw32-make all coin-versions -j2
+        cmake .. -G "Visual Studio 16 2019" -A x64
+        cmake --build .
         ctest || true
       displayName: Build package
     - bash: |

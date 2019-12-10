@@ -25,7 +25,7 @@ include(FortranCInterface)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${IPOPTFORT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${IPOPTFORT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${IPOPTFORT_BINARY_DIR}/lib)
-
+set(BUILD_SHARED_LIBS False)
 # Link the gfortran runtime statically if possible.
 if (NOT BUILD_SHARED_LIBS OR CMAKE_GNUtoMS)
   set(CMAKE_SHARED_LINKER_FLAGS
@@ -40,6 +40,8 @@ if (CMAKE_GNUtoMS)
   endforeach ()
 endif ()
 
+
+message("CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS}")
 # Set F77_FUNC & F77_FUNC_ in cache as they are used in the parent project.
 set(F77_FUNC "${FortranCInterface_GLOBAL_MACRO}" CACHE INTERNAL "")
 set(F77_FUNC_ "${FortranCInterface_GLOBAL__MACRO}" CACHE INTERNAL "")

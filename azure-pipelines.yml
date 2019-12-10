@@ -70,8 +70,8 @@ jobs:
         git submodule update --init --recursive --remote
         mkdir build
         cd build
-        cmake .. -G "Visual Studio 16 2019" -A x64
-        cmake --build .
+        cmake .. -G "Visual Studio 16 2019" -A x64 -DCOIN_DISABLE_WARNINGS=1
+        cmake --build . 
         ctest || true
       displayName: Build package
     - bash: |

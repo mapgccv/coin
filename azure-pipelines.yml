@@ -71,8 +71,7 @@ jobs:
         mkdir build
         cd build
         cmake .. -G "Visual Studio 16 2019" -A x64 -DCOIN_DISABLE_WARNINGS=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_SH="CMAKE_SH-NOTFOUND"
-        cmake --build . 
-        ctest -C Release || true
+        cmake --build . -j 2
       displayName: Build package
     - bash: |
         UPLOAD_DIR=$UPLOAD/win$NBITS/

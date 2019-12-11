@@ -642,7 +642,7 @@ if (EXISTS ${COIN_SOURCE_DIR}/Ipopt)
       # which cause custom build to fail.
       file(WRITE run-setenv.bat "call \"${MP_SETENV}\" %* 2> nul")
       set(path ${CMAKE_CURRENT_BINARY_DIR}/run-setenv.bat)
-      set(FORTRAN_CMAKE_FLAGS -DCMAKE_GNUtoMS_VCVARS=${path} -DCMAKE_GNUtoMS=ON -DBUILD_SHARED_LIBS=ON)
+      set(FORTRAN_CMAKE_FLAGS -DCMAKE_GNUtoMS_VCVARS=${path} -DCMAKE_GNUtoMS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_SH="CMAKE_SH-NOTFOUND")
       set_property(GLOBAL PROPERTY CMAKE_GNU_TO_MSVC 1)
       set(BUILD_IPOPTFORT TRUE)
       message("Found GFortran at ${MINGW_GFORTRAN}, using it for ipopt build under Visual Studio")

@@ -70,9 +70,9 @@ jobs:
         git submodule update --init --recursive --remote
         mkdir build
         cd build
-        cmake .. -G "Visual Studio 16 2019" -A x64 -DCOIN_DISABLE_WARNINGS=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_SH="CMAKE_SH-NOTFOUND"
-        cmake --build . -j 2
-        ctest || true
+        cmake .. -G "Visual Studio 16 2019" -A x64 -DCOIN_DISABLE_WARNINGS=1 -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+        cmake --build . -j 2 --config Release
+        ctest -C Release || true
       displayName: Build package
     - bash: |
         UPLOAD_DIR=$UPLOAD/win$NBITS/

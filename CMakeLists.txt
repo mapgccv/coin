@@ -13,7 +13,6 @@ endif ()
 set(MP_DIR ThirdParty/mp)
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${MP_DIR}/CMakeLists.txt)
   include(${CMAKE_CURRENT_SOURCE_DIR}/${MP_DIR}/support/cmake/init.cmake)
-  message("MP_SET_ENV ${MP_SET_ENV}")
   set(BUILD asl)
   add_subdirectory(${MP_DIR})
   set(COIN_HAS_ASL 1)
@@ -518,16 +517,17 @@ if (COIN_HAS_ASL)
     endif ()
   endforeach ()
 
-  if (MP_SETENV)
+  #if (MP_SETENV)
     # Create a script that sets up a build environment in Fortran subprojects.
     # It is necessary because setenv.cmd produces bogus errors
     # ERROR: The system was unable to find the specified registry key or value.
     # which cause custom build to fail.
-    file(WRITE run-setenv.bat "call \"${MP_SETENV}\" %* 2> nul")
+    set(MP_SETENV "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat")
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run-setenv.bat "call \"${MP_SETENV}\" %* 2> nul")
     set(path ${CMAKE_CURRENT_BINARY_DIR}/run-setenv.bat)
     set(FORTRAN_CMAKE_FLAGS -DCMAKE_GNUtoMS_VCVARS=${path} -DVCVARS32=${path})
   endif ()
-endif ()
+#endif ()
 
 enable_testing()
 

@@ -10,7 +10,8 @@ configure_file(
 
 # Add the CMake directory for custon CMake modules
 set(CMAKE_MODULE_PATH "${LAPACK_SOURCE_DIR}/CMAKE" ${CMAKE_MODULE_PATH})
-
+ set(CMAKE_SHARED_LINKER_FLAGS
+      "${CMAKE_SHARED_LINKER_FLAGS} -static-libgfortran -static-libgcc -static-libstdc++ -llibquadmath")
 if (UNIX)
    if ( "${CMAKE_Fortran_COMPILER}" MATCHES "ifort" )
   set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fltconsistency -fp_port" )

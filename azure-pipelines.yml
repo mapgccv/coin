@@ -72,11 +72,12 @@ jobs:
         cd build
         cmake .. -G "Visual Studio 16 2019" -A x64 -DCOIN_DISABLE_WARNINGS=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_SH="CMAKE_SH-NOTFOUND"
         cmake --build . -j 2
+        ctest || true
       displayName: Build package
     - bash: |
         UPLOAD_DIR=$UPLOAD/win$NBITS/
         mkdir -p $UPLOAD_DIR
-        cp build/bin/{cbc.exe,bonmin.exe,couenne.exe,ipopt.exe} $UPLOAD_DIR
+        cp build/bin/Release/{cbc.exe,bonmin.exe,couenne.exe,ipopt.exe} $UPLOAD_DIR
         cp build/coin-versions.txt $UPLOAD_DIR
         cd $UPLOAD_DIR
         7z a -tzip win$NBITS.zip *

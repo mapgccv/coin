@@ -602,14 +602,8 @@ endfunction()
 
 # Remove linking to gcc_s, introduced after cmake 3.8.2 for CXX projects
 function(removegcc_s)
-  
   foreach(lang ${ARGN})
-    set(FILTERED "")
-    foreach(lib ${CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES})
-      if(NOT ${lib} MATCHES "gcc_s")
-       set(FILTERED ${FILTERED} ${lib})
-      endif()
-    endforeach()
+   string(REPLACE "gcc_s" "" FILTERED "${CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES}")
     set(CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES ${FILTERED} PARENT_SCOPE)
   endforeach()
 endfunction()

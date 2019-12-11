@@ -42,7 +42,7 @@ function (force_static_libs lang)
     set(result ${result} ${lib})
   endforeach ()
   set(CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES ${result} PARENT_SCOPE)
-  message("CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES: ${result}")
+  #message("CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES: ${result}")
 endfunction ()
 
 # Output binaries to bin to avoid a name clash between the Cbc directory
@@ -522,7 +522,8 @@ if (COIN_HAS_ASL)
     # It is necessary because setenv.cmd produces bogus errors
     # ERROR: The system was unable to find the specified registry key or value.
     # which cause custom build to fail.
-    set(MP_SETENV "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat")
+    #set(MP_SETENV "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat")
+    set(MP_SETENV "")
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/run-setenv.bat "call \"${MP_SETENV}\" %* 2> nul")
     set(path ${CMAKE_CURRENT_BINARY_DIR}/run-setenv.bat)
     set(FORTRAN_CMAKE_FLAGS -DCMAKE_GNUtoMS_VCVARS=${path} -DVCVARS32=${path})
@@ -599,7 +600,19 @@ function(add_ipopt_test name)
 endfunction()
 
 
-
+# Remove linking to gcc_s, introduced after cmake 3.8.2 for CXX projects
+function(removegcc_s)
+  
+  foreach(lang ${ARGN})
+    set(FILTERED "")
+    foreach(lib ${CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES})
+      if(NOT ${lib} MATCHES "gcc_s")
+       set(FILTERED ${FILTERED} ${lib})
+      endif()
+    endforeach()
+    set(CMAKE_${lang}_IMPLICIT_LINK_LIBRARIES ${FILTERED} PARENT_SCOPE)
+  endforeach()
+endfunction()
 
 if (EXISTS ${COIN_SOURCE_DIR}/Ipopt)
   set(BUILD_IPOPT TRUE)
@@ -653,6 +666,7 @@ if (EXISTS ${COIN_SOURCE_DIR}/Ipopt)
         set(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES
           ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES} gcc)
       endif ()
+      removegcc_s("CXX")
     endif ()
   endif ()
 endif ()
@@ -724,12 +738,26 @@ if (BUILD_IPOPT)
   if (COIN_HAS_ASL)
     add_ipopt_library(ipoptamplinterface Apps/AmplSolver ${ASL_LIBRARIES})
     target_link_libraries(ipopt ipoptamplinterface)
+    
     add_executable(ipopt-executable
       Ipopt/Ipopt/src/Apps/AmplSolver/ampl_ipopt.cpp ${IPOPT_EXTERNAL_LIBS})
     target_link_libraries(ipopt-executable ipopt)
     set_target_properties(ipopt-executable PROPERTIES
       COMPILE_DEFINITIONS IPOPT_BUILD OUTPUT_NAME ipopt IMPORT_PREFIX imp)
 
+   get_target_property(FLAGS ipopt-executable LINK_FLAGS)
+   get_target_property(LLLIBS ipopt-executable LINK_LIBRARIES)
+   message("CMAKE_CXX_IMPLICIT_LINK_LIBRARIES ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES}")
+   message("FLAGS = ${FLAGS}")
+   message("LLLIBS = ${LLLIBS}")
+   get_target_property(LLLIBS ipopt LINK_LIBRARIES)
+   message("LLLIBSIPOPT = ${LLLIBS}")
+   get_target_property(LLLIBS ipoptfort LINK_LIBRARIES)
+   message("LLLIBSIPOPTFORT = ${LLLIBS}")
+   get_target_property(LLLIBS lapack LINK_LIBRARIES)
+   message("LLLIBSIPOPTFORTlapack = ${LLLIBS}")
+   get_target_property(LLLIBS blas LINK_LIBRARIES)
+   message("LLLIBSIPOPTFORTblas = ${LLLIBS}")
     if (NOT WIN32)
       add_test(NAME Ipopt-amplTest
         COMMAND sh -c "bin/ipopt Ipopt/Ipopt/test/mytoy.nl | grep 'EXIT: Optimal Solution Found.'")
